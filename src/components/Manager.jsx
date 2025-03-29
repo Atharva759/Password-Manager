@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Manager = () => {
   const [form, setform] = useState({
@@ -26,14 +28,41 @@ const Manager = () => {
   
 
   const savepass = () => {
+    if(form.site.length > 3 && form.username.length >3 &&form.password.length >3) {
     setpassarr([...passarr, {...form, id:uuidv4()}]);
     localStorage.setItem("pass", JSON.stringify([...passarr, {...form, id:uuidv4()}]));
     setform({site:"",username:"",password:""});
+    toast.success('Password Saved !', {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      });
+      setTimeout(()=>{
+        toast.dismiss();
+      },3000);
+    }else{
+      toast('Error : Password Not Saved')
+    }
   };
 
   const deletepass = (id) =>{
     setpassarr(passarr.filter(item=>item.id!==id));
     localStorage.setItem("pass",JSON.stringify(passarr.filter(item=>item.id!==id)))
+    toast.error('Password Deleted', {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      });
   }
   const editpass = (id) => {
     setform(passarr.filter(i=>i.id===id)[0]);
@@ -44,7 +73,21 @@ const Manager = () => {
     setform({ ...form, [e.target.name]: e.target.value });
   };
 
-  return (
+  return ( <>
+    <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={true}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
+            {/* Same as */}
+            <ToastContainer />
     <div className="bg-[#F8EDE3] border-b-6 border-[#8D493A] ">
       <div className="flex p-4 justify-center items-center">
         <label htmlFor="" className="p-2 text-[20px]">
@@ -139,7 +182,8 @@ const Manager = () => {
         </div>)}
       </div>
     </div>
-  );
-};
+    </>
+  )
+}
 
 export default Manager;
