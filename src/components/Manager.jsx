@@ -34,7 +34,7 @@ const Manager = () => {
     setform({site:"",username:"",password:""});
     toast.success('Password Saved !', {
       position: "top-right",
-      autoClose: 3000,
+      autoClose: 2000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -55,7 +55,7 @@ const Manager = () => {
     localStorage.setItem("pass",JSON.stringify(passarr.filter(item=>item.id!==id)))
     toast.error('Password Deleted', {
       position: "top-right",
-      autoClose: 3000,
+      autoClose: 2000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
