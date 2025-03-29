@@ -73,4 +73,4 @@ The passwords are stored in the browser’s `localStorage`, and are retrieved on
 
 ## License
 
-This project is open source and available under the MIT License. See the [LICENSE](LICENSE) file for more details.
+This project is open source and available under the MIT License. 
