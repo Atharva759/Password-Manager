@@ -50,7 +50,7 @@ return (
           {isSignup ? 'Sign Up' : 'Login'}
         </button>
       </div>
-
+      <p className='mt-4 text-sm text-center text-gray-600 '>Demo Username & Password : user@mail.com</p>
       <p
         onClick={() => setIsSignup(!isSignup)}
         className="mt-4 text-sm text-center text-gray-600 hover:text-black cursor-pointer transition"
