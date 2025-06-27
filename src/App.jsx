@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import AuthPage from './pages/Authpage';
+import Authpage from './pages/Authpage';
 import Manager from './pages/Manager';
 import { auth } from './firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
