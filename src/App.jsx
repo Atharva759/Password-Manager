@@ -16,7 +16,7 @@ function App() {
     <Router>
       <Navbar/>
       <Routes>
-        <Route path="/auth" element={!user ? <AuthPage /> : <Navigate to="/" />} />
+        <Route path="/auth" element={!user ? <Authpage /> : <Navigate to="/" />} />
         <Route path="/" element={user ? <Manager /> : <Navigate to="/auth" />} />
       </Routes>
       <Footer/>
