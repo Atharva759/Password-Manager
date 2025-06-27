@@ -2,11 +2,12 @@ import React from "react";
 
 const Navbar = () => {
   return (
-    <nav className="bg-[#F8EDE3] p-5 border-b-[#8D493A] border-b-6 text-center">
-      <div className="font-bold text-2xl p-2">
-        <span className="text-[#8D493A]">Password Manager</span>
+    <nav className="backdrop-blur-md bg-white/10 border-b border-gray-300 shadow-md p-4">
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <span className="text-2xl font-bold text-black">
+          Password Manager
+        </span>
       </div>
-      
     </nav>
   );
 };
