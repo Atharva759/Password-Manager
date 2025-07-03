@@ -4,10 +4,14 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import {auth} from "../firebase";
+import {db,auth} from "../firebase";
+import { addDoc, collection, deleteDoc, getDocs, where, query, doc } from "firebase/firestore";
+import CryptoJS from "crypto-js";
+
 
 
 const Manager = () => {
+  const SECRET_KEY = import.meta.env.VITE_Secret_key;
   const [uid,setUid] = useState(null); 
   const [form, setform] = useState({
     site: "",
@@ -17,6 +21,21 @@ const Manager = () => {
 
   const [passarr, setpassarr] = useState([]);
   const [visiblepass, setvisiblepass] = useState({});
+
+  const getDecryptedPassword = (encrypted) => {
+
+    
+    try {
+      const bytes = CryptoJS.AES.decrypt(encrypted, SECRET_KEY);
+      const res = bytes.toString(CryptoJS.enc.Utf8);
+      return res || "ERROR";
+    } catch (err) {
+      return "Decryption failed";
+    }
+    
+
+};
+
 
   useEffect(()=>{
     const unsub = onAuthStateChanged(auth,(user)=>{
@@ -31,14 +50,22 @@ const Manager = () => {
 
   useEffect(() => {
 
+    const fetchPasswords = async() => {
     if(uid){
-        let stored = localStorage.getItem(`pass_${uid}`);
-        if(stored){
-            setpassarr(JSON.parse(stored));
-        }else{
-            setpassarr([]);
-        }
+      try {
+        const snapshot = await getDocs(collection(db,"users",uid,"passwords"));
+        const data = snapshot.docs.map(doc=>
+        ({
+          ...doc.data(),
+          docId:doc.id,
+        }));
+        setpassarr(data);
+      }catch(error){
+        console.log("Error fetching");
+      }
     }
+  };
+  fetchPasswords();
     
   }, [uid]);
 
@@ -50,58 +77,82 @@ const Manager = () => {
   }
   
 
-  const savepass = () => {
+  const savepass = async() => {
     if(!uid){
         toast.error("User not loaded..wait");
         return;
     }
     if(form.site.length > 3 && form.username.length >3 &&form.password.length >3) {
-    const newEntry = {...form,id:uuidv4()};
-    const updatedPassArray = [...passarr,newEntry];
-    setpassarr(updatedPassArray);
-    localStorage.setItem(`pass_${uid}`,JSON.stringify(updatedPassArray));
-    setform({site:"",username:"",password:""});
+      const encryptedPassword = CryptoJS.AES.encrypt(form.password, SECRET_KEY).toString();
+      const newEntry = {
+        site: form.site,
+        username: form.username,
+        password: encryptedPassword,
+        id: uuidv4(),
+      };
 
 
-    toast.success('Password Saved !', {
-      position: "top-right",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      });
-      setTimeout(()=>{
-        toast.dismiss();
-      },3000);
-    }else{
-      toast('Error : Password Not Saved')
+    try{
+      await addDoc(collection(db , "users",uid,"passwords"),newEntry);
+      setpassarr([...passarr,newEntry]);
+      setform({site:"",username:"",password:""});
+      toast.success('Password Saved !', {
+                  position: "top-right",
+                  autoClose: 1000,
+                  hideProgressBar: true,
+                  closeOnClick: true,
+                  pauseOnHover: false,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "colored",
+                  });
+    }catch(error){
+      console.error("Erorr saving pass");
     }
-  };
-
-  const deletepass = (id) =>{
-    const filtered = passarr.filter(item=>item.id!==id);
-    setpassarr(filtered);
-    localStorage.setItem(`pass_${uid}`,JSON.stringify(filtered));
-    toast.error('Password Deleted', {
-      position: "top-right",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      });
   }
+}
+
+  const deletepass = async (id) =>{
+    try{
+      const itemtodelete = passarr.find(item=>item.id===id);
+      if(!itemtodelete){
+        console.error("Item not found");
+        return;
+      }
+      await deleteDoc(doc(db,"users",uid,"passwords",itemtodelete.docId));
+      const filtered = passarr.filter((item)=>item.id!==id);
+      setpassarr(filtered);
+      toast.error('Password Deleted !', {
+                  position: "top-right",
+                  autoClose: 1500,
+                  hideProgressBar: true,
+                  closeOnClick: true,
+                  pauseOnHover: false,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "colored",
+    });
+    }catch(error){
+      console.log("Error in delete",error);
+    }
+  }
+
   const editpass = (id) => {
     const selected = passarr.find((i)=>i.id===id);
     if(selected){
         setform(selected);
         deletepass(id);
-    }
+      }
+        toast.info('Password Edited !', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    });
   }
 
   const handleChange = (e) => {
@@ -111,6 +162,16 @@ const Manager = () => {
   const handleLogout = async () => {
     try{
         await signOut(auth);
+        toast.success('Logged Out !', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    });
     }catch(error){
         console.log(error);
     }
@@ -205,7 +266,7 @@ const Manager = () => {
                       <td className="p-3">{item.username}</td>
                       <td className="p-3">
                         <div className="flex items-center gap-2">
-                          <span>{visiblepass[item.id] ? item.password : "••••••"}</span>
+                          <span>{visiblepass[item.id] ? getDecryptedPassword(item.password) : "••••••"}</span>
                           <button onClick={() => showpass(item.id)} className="text-gray-600 hover:text-black cursor-pointer">
                             {visiblepass[item.id] ? <FaEyeSlash /> : <FaEye />}
                           </button>
@@ -219,7 +280,7 @@ const Manager = () => {
                           Edit
                         </button>
                         <button
-                          onClick={() => deletepass(item.id)}
+                          onClick={()=>deletepass(item.id)}
                           className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 cursor-pointer"
                         >
                           Delete

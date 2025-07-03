@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { auth } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function AuthPage() {
   const [isSignup, setIsSignup] = useState(false);
@@ -11,8 +13,28 @@ function AuthPage() {
     try {
       if (isSignup) {
         await createUserWithEmailAndPassword(auth, email, password);
+        toast.success('Signed Up Successfully.', {
+            position: "top-right",
+            autoClose: 1500,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            });
       } else {
         await signInWithEmailAndPassword(auth, email, password);
+        toast.success('Logged in Successfully.', {
+            position: "top-right",
+            autoClose: 1500,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            });
       }
     } catch (err) {
       alert(err.message);
@@ -45,7 +67,7 @@ return (
 
         <button
           onClick={handleAuth}
-          className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-900 transition duration-200"
+          className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-900 transition duration-200 cursor-pointer"
         >
           {isSignup ? 'Sign Up' : 'Login'}
         </button>
