@@ -1,15 +1,16 @@
-import React from "react";
 
 const Navbar = () => {
   return (
-    <nav className="backdrop-blur-md bg-white/10 border-b border-gray-300 shadow-md p-4">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <span className="text-2xl font-bold text-black">
-          Password Manager
+    <nav className="bg-gray-900 shadow-md p-4">
+      <div className="max-w-7xl mx-auto flex justify-center items-center gap-3">
+          <div className="h-[50px] w-[50px]">
+          <img width="94" height="94" src="https://img.icons8.com/3d-fluency/94/security-checked.png" alt="security-checked"/>
+        </div>
+        <span className="text-2xl md:text-3xl font-extrabold tracking-wide text-green-500">
+          Password <span className="text-green-400">Manager</span>
         </span>
       </div>
     </nav>
   );
 };
-
 export default Navbar;

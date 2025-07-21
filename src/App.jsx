@@ -1,25 +1,36 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Authpage from './pages/Authpage';
-import Manager from './pages/Manager';
-import { auth } from './firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import Authpage from "./pages/Authpage";
+import Manager from "./pages/Manager";
+import { auth } from "./firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import Loader from "./components/Loader";
 
 function App() {
   const [user, loading] = useAuthState(auth);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loader />;
 
   return (
     <Router>
-      <Navbar/>
+      <Navbar />
       <Routes>
-        <Route path="/auth" element={!user ? <Authpage /> : <Navigate to="/" />} />
-        <Route path="/" element={user ? <Manager /> : <Navigate to="/auth" />} />
+        <Route
+          path="/auth"
+          element={!user ? <Authpage /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/"
+          element={user ? <Manager /> : <Navigate to="/auth" />}
+        />
       </Routes>
-      <Footer/>
+      <Footer />
     </Router>
   );
 }
