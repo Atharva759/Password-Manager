@@ -52,7 +52,7 @@ function AuthPage() {
         autoClose: 1500,
       });
     } catch (err) {
-      toast.info("Something wen wrong ! Try Again", {
+      toast.info("Something went wrong ! Try Again", {
         position: "top-right",
         autoClose: 1500,
         hideProgressBar: false,
