@@ -203,7 +203,7 @@ const Manager = () => {
     }
   };
   const sitelog = (site) => {
-    return site ? `https://logo.clearbit.com/${site}` : defaultlogo;
+    return site ? `https://icons.duckduckgo.com/ip3/${site}.ico` : defaultlogo;
   };
 
   return (
