@@ -1,5 +1,7 @@
 # Password Manager
 
+![alt text](/images/pwm1.png) ![alt text](/images/pwm2.png)
+
 This project is a simple Password Manager built using React, allowing users to store and manage their passwords securely. The application allows users to add, edit, delete, and view their passwords. The passwords are stored in the browser's `localStorage`, ensuring persistence across sessions.
 
 ## Features
